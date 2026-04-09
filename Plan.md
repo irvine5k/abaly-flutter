@@ -210,6 +210,16 @@ Phases 3, 4, 5 can run in parallel after Phase 2.
 
 ---
 
+## Workflow
+
+- **Repository:** https://github.com/irvine5k/abaly-flutter
+- For each Linear ticket worked on, create a dedicated branch and open a PR against `main`
+- PR title references the Linear ticket (e.g., "COR-35: Dependencies & Project Config")
+- PR description includes a summary of changes and links to the Linear issue
+- Update the Linear issue status as work progresses (Todo → In Progress → In Review → Done)
+
+---
+
 ## Verification
 
 After each phase:
