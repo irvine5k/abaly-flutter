@@ -16,7 +16,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: flutter-linux-stable-3.41.6-x64
+          cache-key: flutter-${{ runner.os }}-${{ runner.arch }}-stable-3.41.6
 
       - name: Install dependencies
         run: flutter pub get
