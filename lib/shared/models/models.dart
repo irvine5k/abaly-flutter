@@ -1,4 +1,5 @@
 export 'ai_summary.dart';
+export 'app_user.dart';
 export 'organization.dart';
 export 'patient.dart';
 export 'response.dart';
