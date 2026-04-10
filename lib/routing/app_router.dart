@@ -8,7 +8,10 @@ import '../features/auth/view/login_page.dart';
 import '../features/auth/view/sign_up_page.dart';
 import '../features/home/view/home_page.dart';
 import '../features/organization/view/organization_page.dart';
+import '../features/patients/cubit/create_patient_cubit.dart';
+import '../features/patients/cubit/patient_list_cubit.dart';
 import '../features/patients/data/patient_repository.dart';
+import '../features/patients/view/create_patient_page.dart';
 import '../features/patients/view/patients_page.dart';
 import '../features/sessions/cubit/create_session_cubit.dart';
 import '../features/sessions/cubit/session_detail_cubit.dart';
@@ -102,7 +105,23 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
               routes: [
                 GoRoute(
                   path: '/patients',
-                  builder: (context, state) => const PatientsPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => PatientListCubit(
+                      patientRepository: context.read<PatientRepository>(),
+                    ),
+                    child: const PatientsPage(),
+                  ),
+                  routes: [
+                    GoRoute(
+                      path: 'create',
+                      builder: (context, state) => BlocProvider(
+                        create: (_) => CreatePatientCubit(
+                          patientRepository: context.read<PatientRepository>(),
+                        ),
+                        child: const CreatePatientPage(),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
