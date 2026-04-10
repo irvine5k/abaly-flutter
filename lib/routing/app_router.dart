@@ -12,6 +12,7 @@ import '../features/patients/data/patient_repository.dart';
 import '../features/patients/view/patients_page.dart';
 import '../features/sessions/cubit/create_session_cubit.dart';
 import '../features/sessions/cubit/session_detail_cubit.dart';
+import '../features/sessions/cubit/session_list_cubit.dart';
 import '../features/sessions/data/session_repository.dart';
 import '../features/sessions/view/create_session_page.dart';
 import '../features/sessions/view/session_detail_page.dart';
@@ -54,7 +55,13 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
               routes: [
                 GoRoute(
                   path: '/sessions',
-                  builder: (context, state) => const SessionsPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => SessionListCubit(
+                      sessionRepository:
+                          context.read<SessionRepository>(),
+                    ),
+                    child: const SessionsPage(),
+                  ),
                   routes: [
                     GoRoute(
                       path: 'create',

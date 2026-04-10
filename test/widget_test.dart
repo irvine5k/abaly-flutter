@@ -5,6 +5,7 @@ import 'package:abaly/features/patients/data/patient_repository.dart';
 import 'package:abaly/features/sessions/data/session_repository.dart';
 import 'package:abaly/features/templates/data/template_repository.dart';
 import 'package:abaly/shared/models/app_user.dart';
+import 'package:abaly/shared/models/session.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -39,6 +40,11 @@ void main() {
               role: UserRole.therapist,
               organizationId: 'org-1',
             ));
+    when(
+      () => mockSessionRepository.getSessions(
+        organizationId: any(named: 'organizationId'),
+      ),
+    ).thenAnswer((_) async => <Session>[]);
   });
 
   Widget buildApp() {
