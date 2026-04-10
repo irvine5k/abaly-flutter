@@ -8,10 +8,16 @@ import '../features/auth/view/login_page.dart';
 import '../features/auth/view/sign_up_page.dart';
 import '../features/home/view/home_page.dart';
 import '../features/organization/view/organization_page.dart';
+import '../features/patients/data/patient_repository.dart';
 import '../features/patients/view/patients_page.dart';
+import '../features/sessions/cubit/create_session_cubit.dart';
+import '../features/sessions/cubit/session_detail_cubit.dart';
 import '../features/sessions/cubit/session_list_cubit.dart';
 import '../features/sessions/data/session_repository.dart';
+import '../features/sessions/view/create_session_page.dart';
+import '../features/sessions/view/session_detail_page.dart';
 import '../features/sessions/view/sessions_page.dart';
+import '../features/templates/data/template_repository.dart';
 import '../features/templates/view/templates_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -56,6 +62,39 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
                     ),
                     child: const SessionsPage(),
                   ),
+                  routes: [
+                    GoRoute(
+                      path: 'create',
+                      builder: (context, state) => BlocProvider(
+                        create: (_) => CreateSessionCubit(
+                          sessionRepository:
+                              context.read<SessionRepository>(),
+                          patientRepository:
+                              context.read<PatientRepository>(),
+                          templateRepository:
+                              context.read<TemplateRepository>(),
+                        ),
+                        child: const CreateSessionPage(),
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':id',
+                      builder: (context, state) {
+                        final sessionId = state.pathParameters['id']!;
+                        return BlocProvider(
+                          create: (_) => SessionDetailCubit(
+                            sessionRepository:
+                                context.read<SessionRepository>(),
+                            patientRepository:
+                                context.read<PatientRepository>(),
+                            templateRepository:
+                                context.read<TemplateRepository>(),
+                          ),
+                          child: SessionDetailPage(sessionId: sessionId),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

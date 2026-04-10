@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
+
 import 'package:abaly/features/auth/data/auth_repository.dart';
+import 'package:abaly/features/patients/data/patient_repository.dart';
 import 'package:abaly/features/sessions/data/session_repository.dart';
+import 'package:abaly/features/templates/data/template_repository.dart';
 import 'package:abaly/shared/models/app_user.dart';
 import 'package:abaly/shared/models/session.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,13 +15,21 @@ class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockSessionRepository extends Mock implements SessionRepository {}
 
+class MockPatientRepository extends Mock implements PatientRepository {}
+
+class MockTemplateRepository extends Mock implements TemplateRepository {}
+
 void main() {
   late MockAuthRepository mockAuthRepository;
   late MockSessionRepository mockSessionRepository;
+  late MockPatientRepository mockPatientRepository;
+  late MockTemplateRepository mockTemplateRepository;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
     mockSessionRepository = MockSessionRepository();
+    mockPatientRepository = MockPatientRepository();
+    mockTemplateRepository = MockTemplateRepository();
     when(() => mockAuthRepository.authStateChanges)
         .thenAnswer((_) => const Stream.empty());
     when(() => mockAuthRepository.getCurrentUser())
@@ -35,15 +47,21 @@ void main() {
     ).thenAnswer((_) async => <Session>[]);
   });
 
+  Widget buildApp() {
+    return AbalyApp(
+      authRepository: mockAuthRepository,
+      sessionRepository: mockSessionRepository,
+      patientRepository: mockPatientRepository,
+      templateRepository: mockTemplateRepository,
+    );
+  }
+
   testWidgets('App renders login page when unauthenticated',
       (WidgetTester tester) async {
     when(() => mockAuthRepository.getCurrentUser())
         .thenAnswer((_) async => null);
 
-    await tester.pumpWidget(AbalyApp(
-      authRepository: mockAuthRepository,
-      sessionRepository: mockSessionRepository,
-    ));
+    await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Sign In'), findsOneWidget);
@@ -51,10 +69,7 @@ void main() {
 
   testWidgets('App renders home page when authenticated',
       (WidgetTester tester) async {
-    await tester.pumpWidget(AbalyApp(
-      authRepository: mockAuthRepository,
-      sessionRepository: mockSessionRepository,
-    ));
+    await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Sessions'), findsWidgets);
