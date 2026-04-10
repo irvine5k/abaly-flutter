@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/cubit/auth_cubit.dart';
@@ -8,6 +9,8 @@ import '../features/auth/view/sign_up_page.dart';
 import '../features/home/view/home_page.dart';
 import '../features/organization/view/organization_page.dart';
 import '../features/patients/view/patients_page.dart';
+import '../features/sessions/cubit/session_list_cubit.dart';
+import '../features/sessions/data/session_repository.dart';
 import '../features/sessions/view/sessions_page.dart';
 import '../features/templates/view/templates_page.dart';
 
@@ -46,7 +49,13 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
               routes: [
                 GoRoute(
                   path: '/sessions',
-                  builder: (context, state) => const SessionsPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => SessionListCubit(
+                      sessionRepository:
+                          context.read<SessionRepository>(),
+                    ),
+                    child: const SessionsPage(),
+                  ),
                 ),
               ],
             ),

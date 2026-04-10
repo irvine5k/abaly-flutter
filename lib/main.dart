@@ -7,6 +7,8 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
+import 'features/sessions/data/session_repository.dart';
+import 'features/sessions/data/supabase_session_repository.dart';
 import 'routing/app_router.dart';
 
 void main() async {
@@ -17,28 +19,45 @@ void main() async {
     client: Supabase.instance.client,
   );
 
-  runApp(AbalyApp(authRepository: authRepository));
+  final sessionRepository = SupabaseSessionRepository(
+    client: Supabase.instance.client,
+  );
+
+  runApp(AbalyApp(
+    authRepository: authRepository,
+    sessionRepository: sessionRepository,
+  ));
 }
 
 class AbalyApp extends StatelessWidget {
-  const AbalyApp({super.key, required this.authRepository});
+  const AbalyApp({
+    super.key,
+    required this.authRepository,
+    required this.sessionRepository,
+  });
 
   final AuthRepository authRepository;
+  final SessionRepository sessionRepository;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthCubit(authRepository: authRepository)
-        ..checkAuthStatus(),
-      child: Builder(
-        builder: (context) {
-          final authCubit = context.read<AuthCubit>();
-          return MaterialApp.router(
-            title: 'Abaly',
-            theme: AppTheme.lightTheme,
-            routerConfig: appRouter(authCubit),
-          );
-        },
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SessionRepository>.value(value: sessionRepository),
+      ],
+      child: BlocProvider(
+        create: (_) => AuthCubit(authRepository: authRepository)
+          ..checkAuthStatus(),
+        child: Builder(
+          builder: (context) {
+            final authCubit = context.read<AuthCubit>();
+            return MaterialApp.router(
+              title: 'Abaly',
+              theme: AppTheme.lightTheme,
+              routerConfig: appRouter(authCubit),
+            );
+          },
+        ),
       ),
     );
   }
