@@ -73,7 +73,7 @@ class _CreateSessionPageState extends State<CreateSessionPage> {
       body: BlocConsumer<CreateSessionCubit, CreateSessionState>(
         listener: (context, state) {
           if (state is CreateSessionSuccess) {
-            context.pop();
+            context.pop(true);
           } else if (state is CreateSessionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
