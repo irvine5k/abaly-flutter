@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:abaly/features/auth/data/auth_repository.dart';
+import 'package:abaly/features/organization/data/organization_repository.dart';
 import 'package:abaly/features/patients/data/patient_repository.dart';
 import 'package:abaly/features/sessions/data/session_repository.dart';
 import 'package:abaly/features/templates/data/template_repository.dart';
@@ -19,17 +20,22 @@ class MockPatientRepository extends Mock implements PatientRepository {}
 
 class MockTemplateRepository extends Mock implements TemplateRepository {}
 
+class MockOrganizationRepository extends Mock
+    implements OrganizationRepository {}
+
 void main() {
   late MockAuthRepository mockAuthRepository;
   late MockSessionRepository mockSessionRepository;
   late MockPatientRepository mockPatientRepository;
   late MockTemplateRepository mockTemplateRepository;
+  late MockOrganizationRepository mockOrganizationRepository;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
     mockSessionRepository = MockSessionRepository();
     mockPatientRepository = MockPatientRepository();
     mockTemplateRepository = MockTemplateRepository();
+    mockOrganizationRepository = MockOrganizationRepository();
     when(() => mockAuthRepository.authStateChanges)
         .thenAnswer((_) => const Stream.empty());
     when(() => mockAuthRepository.getCurrentUser())
@@ -53,6 +59,7 @@ void main() {
       sessionRepository: mockSessionRepository,
       patientRepository: mockPatientRepository,
       templateRepository: mockTemplateRepository,
+      organizationRepository: mockOrganizationRepository,
     );
   }
 

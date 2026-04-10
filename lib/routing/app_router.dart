@@ -7,6 +7,8 @@ import '../features/auth/cubit/auth_state.dart';
 import '../features/auth/view/login_page.dart';
 import '../features/auth/view/sign_up_page.dart';
 import '../features/home/view/home_page.dart';
+import '../features/organization/cubit/organization_cubit.dart';
+import '../features/organization/data/organization_repository.dart';
 import '../features/organization/view/organization_page.dart';
 import '../features/patients/cubit/create_patient_cubit.dart';
 import '../features/patients/cubit/patient_list_cubit.dart';
@@ -157,7 +159,13 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
               routes: [
                 GoRoute(
                   path: '/organization',
-                  builder: (context, state) => const OrganizationPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => OrganizationCubit(
+                      organizationRepository:
+                          context.read<OrganizationRepository>(),
+                    ),
+                    child: const OrganizationPage(),
+                  ),
                 ),
               ],
             ),
