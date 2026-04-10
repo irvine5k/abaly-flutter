@@ -9,7 +9,9 @@ import 'features/auth/data/auth_repository.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
 import 'features/patients/data/patient_repository.dart';
 import 'features/patients/data/supabase_patient_repository.dart';
+import 'features/sessions/data/response_repository.dart';
 import 'features/sessions/data/session_repository.dart';
+import 'features/sessions/data/supabase_response_repository.dart';
 import 'features/sessions/data/supabase_session_repository.dart';
 import 'features/templates/data/supabase_template_repository.dart';
 import 'features/templates/data/template_repository.dart';
@@ -24,6 +26,7 @@ void main() async {
   runApp(AbalyApp(
     authRepository: SupabaseAuthRepository(client: client),
     sessionRepository: SupabaseSessionRepository(client: client),
+    responseRepository: SupabaseResponseRepository(client: client),
     patientRepository: SupabasePatientRepository(client: client),
     templateRepository: SupabaseTemplateRepository(client: client),
   ));
@@ -34,12 +37,14 @@ class AbalyApp extends StatelessWidget {
     super.key,
     required this.authRepository,
     required this.sessionRepository,
+    required this.responseRepository,
     required this.patientRepository,
     required this.templateRepository,
   });
 
   final AuthRepository authRepository;
   final SessionRepository sessionRepository;
+  final ResponseRepository responseRepository;
   final PatientRepository patientRepository;
   final TemplateRepository templateRepository;
 
@@ -48,6 +53,7 @@ class AbalyApp extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<SessionRepository>.value(value: sessionRepository),
+        RepositoryProvider<ResponseRepository>.value(value: responseRepository),
         RepositoryProvider<PatientRepository>.value(value: patientRepository),
         RepositoryProvider<TemplateRepository>.value(value: templateRepository),
       ],
