@@ -19,6 +19,10 @@ class _SessionsPageState extends State<SessionsPage> {
   @override
   void initState() {
     super.initState();
+    _loadSessions();
+  }
+
+  void _loadSessions() {
     final authState = context.read<AuthCubit>().state;
     if (authState is AuthAuthenticated) {
       context
@@ -32,7 +36,12 @@ class _SessionsPageState extends State<SessionsPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Sessions')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/sessions/create'),
+        onPressed: () async {
+          final result = await context.push('/sessions/create');
+          if (result == true && mounted) {
+            _loadSessions();
+          }
+        },
         child: const Icon(Icons.add),
       ),
       body: BlocBuilder<SessionListCubit, SessionListState>(

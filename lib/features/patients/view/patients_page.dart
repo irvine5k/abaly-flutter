@@ -19,6 +19,10 @@ class _PatientsPageState extends State<PatientsPage> {
   @override
   void initState() {
     super.initState();
+    _loadPatients();
+  }
+
+  void _loadPatients() {
     final authState = context.read<AuthCubit>().state;
     if (authState is AuthAuthenticated) {
       context
@@ -32,7 +36,12 @@ class _PatientsPageState extends State<PatientsPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Patients')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/patients/create'),
+        onPressed: () async {
+          final result = await context.push('/patients/create');
+          if (result == true && mounted) {
+            _loadPatients();
+          }
+        },
         child: const Icon(Icons.add),
       ),
       body: BlocBuilder<PatientListCubit, PatientListState>(

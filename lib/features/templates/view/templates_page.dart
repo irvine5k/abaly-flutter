@@ -19,6 +19,10 @@ class _TemplatesPageState extends State<TemplatesPage> {
   @override
   void initState() {
     super.initState();
+    _loadTemplates();
+  }
+
+  void _loadTemplates() {
     final authState = context.read<AuthCubit>().state;
     if (authState is AuthAuthenticated) {
       context
@@ -32,7 +36,12 @@ class _TemplatesPageState extends State<TemplatesPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Templates')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/templates/create'),
+        onPressed: () async {
+          final result = await context.push('/templates/create');
+          if (result == true && mounted) {
+            _loadTemplates();
+          }
+        },
         child: const Icon(Icons.add),
       ),
       body: BlocBuilder<TemplateListCubit, TemplateListState>(

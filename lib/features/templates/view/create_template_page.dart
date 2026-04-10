@@ -53,7 +53,7 @@ class _CreateTemplatePageState extends State<CreateTemplatePage> {
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
         if (state.status == CreateTemplateStatus.success) {
-          context.pop();
+          context.pop(true);
         } else if (state.status == CreateTemplateStatus.error &&
             state.error != null) {
           ScaffoldMessenger.of(context).showSnackBar(

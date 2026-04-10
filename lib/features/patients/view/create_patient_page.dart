@@ -58,7 +58,7 @@ class _CreatePatientPageState extends State<CreatePatientPage> {
       body: BlocConsumer<CreatePatientCubit, CreatePatientState>(
         listener: (context, state) {
           if (state is CreatePatientSuccess) {
-            context.pop();
+            context.pop(true);
           } else if (state is CreatePatientError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
