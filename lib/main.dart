@@ -19,33 +19,37 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initSupabase();
 
-  final authRepository = SupabaseAuthRepository(
-    client: Supabase.instance.client,
-  );
+  final client = Supabase.instance.client;
 
-  runApp(AbalyApp(authRepository: authRepository));
+  runApp(AbalyApp(
+    authRepository: SupabaseAuthRepository(client: client),
+    sessionRepository: SupabaseSessionRepository(client: client),
+    patientRepository: SupabasePatientRepository(client: client),
+    templateRepository: SupabaseTemplateRepository(client: client),
+  ));
 }
 
 class AbalyApp extends StatelessWidget {
-  const AbalyApp({super.key, required this.authRepository});
+  const AbalyApp({
+    super.key,
+    required this.authRepository,
+    required this.sessionRepository,
+    required this.patientRepository,
+    required this.templateRepository,
+  });
 
   final AuthRepository authRepository;
+  final SessionRepository sessionRepository;
+  final PatientRepository patientRepository;
+  final TemplateRepository templateRepository;
 
   @override
   Widget build(BuildContext context) {
-    final client = Supabase.instance.client;
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<SessionRepository>(
-          create: (_) => SupabaseSessionRepository(client: client),
-        ),
-        RepositoryProvider<PatientRepository>(
-          create: (_) => SupabasePatientRepository(client: client),
-        ),
-        RepositoryProvider<TemplateRepository>(
-          create: (_) =>
-              SupabaseTemplateRepository(client: client),
-        ),
+        RepositoryProvider<SessionRepository>.value(value: sessionRepository),
+        RepositoryProvider<PatientRepository>.value(value: patientRepository),
+        RepositoryProvider<TemplateRepository>.value(value: templateRepository),
       ],
       child: BlocProvider(
         create: (_) => AuthCubit(authRepository: authRepository)
