@@ -8,7 +8,7 @@ import 'supabase_config.dart';
 /// at the start of [main] before [runApp].
 ///
 /// Reads [SupabaseConfig.url] and [SupabaseConfig.anonKey] which are
-/// injected via --dart-define at build/run time.
+/// generated from .env via envied.
 Future<void> initSupabase() async {
   await Supabase.initialize(
     url: SupabaseConfig.url,
