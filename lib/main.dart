@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide Session;
 
 import 'core/supabase/supabase_init.dart';
 import 'core/theme/app_theme.dart';
@@ -21,19 +21,12 @@ void main() async {
 
   final client = Supabase.instance.client;
 
-  final authRepository = SupabaseAuthRepository(client: client);
-  final sessionRepository = SupabaseSessionRepository(client: client);
-  final patientRepository = SupabasePatientRepository(client: client);
-  final templateRepository = SupabaseTemplateRepository(client: client);
-
-  runApp(
-    AbalyApp(
-      authRepository: authRepository,
-      sessionRepository: sessionRepository,
-      patientRepository: patientRepository,
-      templateRepository: templateRepository,
-    ),
-  );
+  runApp(AbalyApp(
+    authRepository: SupabaseAuthRepository(client: client),
+    sessionRepository: SupabaseSessionRepository(client: client),
+    patientRepository: SupabasePatientRepository(client: client),
+    templateRepository: SupabaseTemplateRepository(client: client),
+  ));
 }
 
 class AbalyApp extends StatelessWidget {
@@ -59,8 +52,8 @@ class AbalyApp extends StatelessWidget {
         RepositoryProvider<TemplateRepository>.value(value: templateRepository),
       ],
       child: BlocProvider(
-        create: (_) =>
-            AuthCubit(authRepository: authRepository)..checkAuthStatus(),
+        create: (_) => AuthCubit(authRepository: authRepository)
+          ..checkAuthStatus(),
         child: Builder(
           builder: (context) {
             final authCubit = context.read<AuthCubit>();

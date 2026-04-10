@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'package:abaly/features/auth/data/auth_repository.dart';
 import 'package:abaly/features/patients/data/patient_repository.dart';
 import 'package:abaly/features/sessions/data/session_repository.dart';
@@ -27,7 +29,6 @@ void main() {
     mockSessionRepository = MockSessionRepository();
     mockPatientRepository = MockPatientRepository();
     mockTemplateRepository = MockTemplateRepository();
-
     when(() => mockAuthRepository.authStateChanges)
         .thenAnswer((_) => const Stream.empty());
     when(() => mockAuthRepository.getCurrentUser())
@@ -40,12 +41,14 @@ void main() {
             ));
   });
 
-  AbalyApp buildApp() => AbalyApp(
-        authRepository: mockAuthRepository,
-        sessionRepository: mockSessionRepository,
-        patientRepository: mockPatientRepository,
-        templateRepository: mockTemplateRepository,
-      );
+  Widget buildApp() {
+    return AbalyApp(
+      authRepository: mockAuthRepository,
+      sessionRepository: mockSessionRepository,
+      patientRepository: mockPatientRepository,
+      templateRepository: mockTemplateRepository,
+    );
+  }
 
   testWidgets('App renders login page when unauthenticated',
       (WidgetTester tester) async {
