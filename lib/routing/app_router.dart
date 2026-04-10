@@ -20,7 +20,10 @@ import '../features/sessions/data/session_repository.dart';
 import '../features/sessions/view/create_session_page.dart';
 import '../features/sessions/view/session_detail_page.dart';
 import '../features/sessions/view/sessions_page.dart';
+import '../features/templates/cubit/create_template_cubit.dart';
+import '../features/templates/cubit/template_list_cubit.dart';
 import '../features/templates/data/template_repository.dart';
+import '../features/templates/view/create_template_page.dart';
 import '../features/templates/view/templates_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -129,7 +132,24 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
               routes: [
                 GoRoute(
                   path: '/templates',
-                  builder: (context, state) => const TemplatesPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => TemplateListCubit(
+                      templateRepository: context.read<TemplateRepository>(),
+                    ),
+                    child: const TemplatesPage(),
+                  ),
+                  routes: [
+                    GoRoute(
+                      path: 'create',
+                      builder: (context, state) => BlocProvider(
+                        create: (context) => CreateTemplateCubit(
+                          templateRepository:
+                              context.read<TemplateRepository>(),
+                        ),
+                        child: const CreateTemplatePage(),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
