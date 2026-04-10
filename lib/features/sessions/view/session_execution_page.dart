@@ -134,6 +134,7 @@ class _SessionExecutionBody extends StatelessWidget {
                 fieldType: field.type,
                 label: field.label,
                 value: currentValue,
+                options: field.options,
                 enabled: !_isReadOnly,
                 onChanged: (value) {
                   context

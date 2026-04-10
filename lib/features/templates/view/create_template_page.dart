@@ -159,7 +159,13 @@ class _FieldListItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         title: Text(field.label),
-        subtitle: Text(field.type.name),
+        subtitle: Text(
+          field.type == FieldType.singleChoice &&
+                  field.options != null &&
+                  field.options!.isNotEmpty
+              ? '${field.type.name} — ${field.options!.join(', ')}'
+              : field.type.name,
+        ),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline),
           onPressed: onDelete,
@@ -180,19 +186,39 @@ class _AddFieldDialog extends StatefulWidget {
 
 class _AddFieldDialogState extends State<_AddFieldDialog> {
   final _labelController = TextEditingController();
+  final _optionController = TextEditingController();
   FieldType _selectedType = FieldType.text;
   final _formKey = GlobalKey<FormState>();
+  final List<String> _options = [];
 
   @override
   void dispose() {
     _labelController.dispose();
+    _optionController.dispose();
     super.dispose();
+  }
+
+  void _addOption() {
+    final option = _optionController.text.trim();
+    if (option.isEmpty) return;
+    setState(() {
+      _options.add(option);
+      _optionController.clear();
+    });
   }
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (_selectedType == FieldType.singleChoice && _options.length < 2) {
+      return;
+    }
     widget.onAdd(
-      TemplateField(label: _labelController.text.trim(), type: _selectedType),
+      TemplateField(
+        label: _labelController.text.trim(),
+        type: _selectedType,
+        options:
+            _selectedType == FieldType.singleChoice ? _options : null,
+      ),
     );
     Navigator.of(context).pop();
   }
@@ -203,42 +229,95 @@ class _AddFieldDialogState extends State<_AddFieldDialog> {
       title: const Text('Add Field'),
       content: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _labelController,
-              decoration: const InputDecoration(
-                labelText: 'Field Label',
-                border: OutlineInputBorder(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _labelController,
+                decoration: const InputDecoration(
+                  labelText: 'Field Label',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Label is required';
+                  }
+                  return null;
+                },
+                autofocus: true,
+                textInputAction: TextInputAction.done,
               ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Label is required';
-                }
-                return null;
-              },
-              autofocus: true,
-              textInputAction: TextInputAction.done,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<FieldType>(
-              initialValue: _selectedType,
-              decoration: const InputDecoration(
-                labelText: 'Field Type',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<FieldType>(
+                initialValue: _selectedType,
+                decoration: const InputDecoration(
+                  labelText: 'Field Type',
+                  border: OutlineInputBorder(),
+                ),
+                items: FieldType.values.map((type) {
+                  return DropdownMenuItem(
+                    value: type,
+                    child: Text(type.name),
+                  );
+                }).toList(),
+                onChanged: (type) {
+                  if (type != null) {
+                    setState(() {
+                      _selectedType = type;
+                      _options.clear();
+                    });
+                  }
+                },
               ),
-              items: FieldType.values.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type.name),
-                );
-              }).toList(),
-              onChanged: (type) {
-                if (type != null) setState(() => _selectedType = type);
-              },
-            ),
-          ],
+              if (_selectedType == FieldType.singleChoice) ...[
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _optionController,
+                        decoration: const InputDecoration(
+                          labelText: 'Option',
+                          border: OutlineInputBorder(),
+                        ),
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _addOption(),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: _addOption,
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ],
+                ),
+                if (_options.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: _options.asMap().entries.map((entry) {
+                      return Chip(
+                        label: Text(entry.value),
+                        onDeleted: () {
+                          setState(() => _options.removeAt(entry.key));
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+                if (_options.length < 2)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Add at least 2 options',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ),
+              ],
+            ],
+          ),
         ),
       ),
       actions: [
