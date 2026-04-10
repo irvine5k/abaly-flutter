@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:abaly/features/auth/data/auth_repository.dart';
 import 'package:abaly/features/organization/data/organization_repository.dart';
 import 'package:abaly/features/patients/data/patient_repository.dart';
+import 'package:abaly/features/sessions/data/response_repository.dart';
 import 'package:abaly/features/sessions/data/session_repository.dart';
 import 'package:abaly/features/templates/data/template_repository.dart';
 import 'package:abaly/shared/models/app_user.dart';
@@ -16,6 +17,8 @@ class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockSessionRepository extends Mock implements SessionRepository {}
 
+class MockResponseRepository extends Mock implements ResponseRepository {}
+
 class MockPatientRepository extends Mock implements PatientRepository {}
 
 class MockTemplateRepository extends Mock implements TemplateRepository {}
@@ -26,6 +29,7 @@ class MockOrganizationRepository extends Mock
 void main() {
   late MockAuthRepository mockAuthRepository;
   late MockSessionRepository mockSessionRepository;
+  late MockResponseRepository mockResponseRepository;
   late MockPatientRepository mockPatientRepository;
   late MockTemplateRepository mockTemplateRepository;
   late MockOrganizationRepository mockOrganizationRepository;
@@ -33,6 +37,7 @@ void main() {
   setUp(() {
     mockAuthRepository = MockAuthRepository();
     mockSessionRepository = MockSessionRepository();
+    mockResponseRepository = MockResponseRepository();
     mockPatientRepository = MockPatientRepository();
     mockTemplateRepository = MockTemplateRepository();
     mockOrganizationRepository = MockOrganizationRepository();
@@ -57,6 +62,7 @@ void main() {
     return AbalyApp(
       authRepository: mockAuthRepository,
       sessionRepository: mockSessionRepository,
+      responseRepository: mockResponseRepository,
       patientRepository: mockPatientRepository,
       templateRepository: mockTemplateRepository,
       organizationRepository: mockOrganizationRepository,

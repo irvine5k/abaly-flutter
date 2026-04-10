@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../shared/models/session.dart';
 import '../cubit/session_detail_cubit.dart';
@@ -106,11 +107,12 @@ class _SessionDetailBody extends StatelessWidget {
             textTheme: textTheme,
           ),
         ],
-        if (session.status == SessionStatus.pending) ...[
+        if (session.status == SessionStatus.pending ||
+            session.status == SessionStatus.inProgress) ...[
           const SizedBox(height: 24),
           FilledButton(
             onPressed: () {
-              // Session execution is a later feature (COR-72).
+              context.go('/sessions/${session.id}/execute');
             },
             child: const Text('Start Session'),
           ),

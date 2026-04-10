@@ -17,10 +17,13 @@ import '../features/patients/view/create_patient_page.dart';
 import '../features/patients/view/patients_page.dart';
 import '../features/sessions/cubit/create_session_cubit.dart';
 import '../features/sessions/cubit/session_detail_cubit.dart';
+import '../features/sessions/cubit/session_execution_cubit.dart';
 import '../features/sessions/cubit/session_list_cubit.dart';
+import '../features/sessions/data/response_repository.dart';
 import '../features/sessions/data/session_repository.dart';
 import '../features/sessions/view/create_session_page.dart';
 import '../features/sessions/view/session_detail_page.dart';
+import '../features/sessions/view/session_execution_page.dart';
 import '../features/sessions/view/sessions_page.dart';
 import '../features/templates/cubit/create_template_cubit.dart';
 import '../features/templates/cubit/template_list_cubit.dart';
@@ -101,6 +104,27 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
                           child: SessionDetailPage(sessionId: sessionId),
                         );
                       },
+                      routes: [
+                        GoRoute(
+                          path: 'execute',
+                          builder: (context, state) {
+                            final sessionId = state.pathParameters['id']!;
+                            return BlocProvider(
+                              create: (_) => SessionExecutionCubit(
+                                sessionRepository:
+                                    context.read<SessionRepository>(),
+                                responseRepository:
+                                    context.read<ResponseRepository>(),
+                                templateRepository:
+                                    context.read<TemplateRepository>(),
+                                patientRepository:
+                                    context.read<PatientRepository>(),
+                              ),
+                              child: SessionExecutionPage(sessionId: sessionId),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
