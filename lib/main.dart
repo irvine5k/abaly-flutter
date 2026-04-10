@@ -7,38 +7,70 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
+import 'features/patients/data/patient_repository.dart';
+import 'features/patients/data/supabase_patient_repository.dart';
+import 'features/sessions/data/session_repository.dart';
+import 'features/sessions/data/supabase_session_repository.dart';
+import 'features/templates/data/supabase_template_repository.dart';
+import 'features/templates/data/template_repository.dart';
 import 'routing/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initSupabase();
 
-  final authRepository = SupabaseAuthRepository(
-    client: Supabase.instance.client,
-  );
+  final client = Supabase.instance.client;
 
-  runApp(AbalyApp(authRepository: authRepository));
+  final authRepository = SupabaseAuthRepository(client: client);
+  final sessionRepository = SupabaseSessionRepository(client: client);
+  final patientRepository = SupabasePatientRepository(client: client);
+  final templateRepository = SupabaseTemplateRepository(client: client);
+
+  runApp(
+    AbalyApp(
+      authRepository: authRepository,
+      sessionRepository: sessionRepository,
+      patientRepository: patientRepository,
+      templateRepository: templateRepository,
+    ),
+  );
 }
 
 class AbalyApp extends StatelessWidget {
-  const AbalyApp({super.key, required this.authRepository});
+  const AbalyApp({
+    super.key,
+    required this.authRepository,
+    required this.sessionRepository,
+    required this.patientRepository,
+    required this.templateRepository,
+  });
 
   final AuthRepository authRepository;
+  final SessionRepository sessionRepository;
+  final PatientRepository patientRepository;
+  final TemplateRepository templateRepository;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthCubit(authRepository: authRepository)
-        ..checkAuthStatus(),
-      child: Builder(
-        builder: (context) {
-          final authCubit = context.read<AuthCubit>();
-          return MaterialApp.router(
-            title: 'Abaly',
-            theme: AppTheme.lightTheme,
-            routerConfig: appRouter(authCubit),
-          );
-        },
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SessionRepository>.value(value: sessionRepository),
+        RepositoryProvider<PatientRepository>.value(value: patientRepository),
+        RepositoryProvider<TemplateRepository>.value(value: templateRepository),
+      ],
+      child: BlocProvider(
+        create: (_) =>
+            AuthCubit(authRepository: authRepository)..checkAuthStatus(),
+        child: Builder(
+          builder: (context) {
+            final authCubit = context.read<AuthCubit>();
+            return MaterialApp.router(
+              title: 'Abaly',
+              theme: AppTheme.lightTheme,
+              routerConfig: appRouter(authCubit),
+            );
+          },
+        ),
       ),
     );
   }
