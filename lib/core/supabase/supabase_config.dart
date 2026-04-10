@@ -1,14 +1,12 @@
-/// Supabase configuration constants.
-///
-/// Values are injected at build time via --dart-define:
-///   flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co \
-///               --dart-define=SUPABASE_ANON_KEY=eyJ...
-///
-/// Never hardcode these values in source.
-class SupabaseConfig {
-  const SupabaseConfig._();
+import 'package:envied/envied.dart';
 
-  static const String url = String.fromEnvironment('SUPABASE_URL');
+part 'supabase_config.g.dart';
 
-  static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+@Envied(path: '.env', obfuscate: true)
+abstract class SupabaseConfig {
+  @EnviedField(varName: 'SUPABASE_URL')
+  static String url = _SupabaseConfig.url;
+
+  @EnviedField(varName: 'SUPABASE_ANON_KEY')
+  static String anonKey = _SupabaseConfig.anonKey;
 }
