@@ -9,6 +9,7 @@ on:
 jobs:
   analyze-and-test:
     runs-on: ubuntu-latest
+    environment: DEV
     steps:
       - uses: actions/checkout@v4
 
@@ -21,9 +22,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Create .env from secrets
+      - name: Create .env from environment variables
         run: |
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_URL=${{ vars.SUPABASE_URL }}" >> .env
           echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
 
       - name: Generate envied config
