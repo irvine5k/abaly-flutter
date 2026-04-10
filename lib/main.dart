@@ -7,6 +7,8 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
+import 'features/organization/data/organization_repository.dart';
+import 'features/organization/data/supabase_organization_repository.dart';
 import 'features/patients/data/patient_repository.dart';
 import 'features/patients/data/supabase_patient_repository.dart';
 import 'features/sessions/data/session_repository.dart';
@@ -26,6 +28,7 @@ void main() async {
     sessionRepository: SupabaseSessionRepository(client: client),
     patientRepository: SupabasePatientRepository(client: client),
     templateRepository: SupabaseTemplateRepository(client: client),
+    organizationRepository: SupabaseOrganizationRepository(client: client),
   ));
 }
 
@@ -36,12 +39,14 @@ class AbalyApp extends StatelessWidget {
     required this.sessionRepository,
     required this.patientRepository,
     required this.templateRepository,
+    required this.organizationRepository,
   });
 
   final AuthRepository authRepository;
   final SessionRepository sessionRepository;
   final PatientRepository patientRepository;
   final TemplateRepository templateRepository;
+  final OrganizationRepository organizationRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +55,9 @@ class AbalyApp extends StatelessWidget {
         RepositoryProvider<SessionRepository>.value(value: sessionRepository),
         RepositoryProvider<PatientRepository>.value(value: patientRepository),
         RepositoryProvider<TemplateRepository>.value(value: templateRepository),
+        RepositoryProvider<OrganizationRepository>.value(
+          value: organizationRepository,
+        ),
       ],
       child: BlocProvider(
         create: (_) => AuthCubit(authRepository: authRepository)
