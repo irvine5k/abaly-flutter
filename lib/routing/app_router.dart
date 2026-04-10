@@ -15,6 +15,9 @@ import '../features/patients/cubit/patient_list_cubit.dart';
 import '../features/patients/data/patient_repository.dart';
 import '../features/patients/view/create_patient_page.dart';
 import '../features/patients/view/patients_page.dart';
+import '../features/progress/cubit/progress_cubit.dart';
+import '../features/progress/data/progress_repository.dart';
+import '../features/progress/view/progress_page.dart';
 import '../features/sessions/cubit/create_session_cubit.dart';
 import '../features/sessions/cubit/session_detail_cubit.dart';
 import '../features/sessions/cubit/session_execution_cubit.dart';
@@ -149,6 +152,25 @@ GoRouter appRouter(AuthCubit authCubit) => GoRouter(
                         ),
                         child: const CreatePatientPage(),
                       ),
+                    ),
+                    GoRoute(
+                      path: ':patientId/progress',
+                      builder: (context, state) {
+                        final patientId =
+                            state.pathParameters['patientId']!;
+                        final patientName =
+                            state.extra as String? ?? 'Patient';
+                        return BlocProvider(
+                          create: (_) => ProgressCubit(
+                            progressRepository:
+                                context.read<ProgressRepository>(),
+                          ),
+                          child: ProgressPage(
+                            patientId: patientId,
+                            patientName: patientName,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

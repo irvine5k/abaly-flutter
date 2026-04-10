@@ -91,6 +91,16 @@ class _PatientCard extends StatelessWidget {
                 'DOB: ${dob.toLocal().toString().split(' ').first}',
               )
             : null,
+        trailing: IconButton(
+          icon: const Icon(Icons.show_chart),
+          tooltip: 'View Progress',
+          onPressed: () {
+            context.push(
+              '/patients/${patient.id}/progress',
+              extra: patient.fullName,
+            );
+          },
+        ),
       ),
     );
   }

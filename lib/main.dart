@@ -11,6 +11,8 @@ import 'features/organization/data/organization_repository.dart';
 import 'features/organization/data/supabase_organization_repository.dart';
 import 'features/patients/data/patient_repository.dart';
 import 'features/patients/data/supabase_patient_repository.dart';
+import 'features/progress/data/progress_repository.dart';
+import 'features/progress/data/supabase_progress_repository.dart';
 import 'features/sessions/data/response_repository.dart';
 import 'features/sessions/data/session_repository.dart';
 import 'features/sessions/data/supabase_response_repository.dart';
@@ -32,6 +34,7 @@ void main() async {
     patientRepository: SupabasePatientRepository(client: client),
     templateRepository: SupabaseTemplateRepository(client: client),
     organizationRepository: SupabaseOrganizationRepository(client: client),
+    progressRepository: SupabaseProgressRepository(client: client),
   ));
 }
 
@@ -44,6 +47,7 @@ class AbalyApp extends StatelessWidget {
     required this.patientRepository,
     required this.templateRepository,
     required this.organizationRepository,
+    required this.progressRepository,
   });
 
   final AuthRepository authRepository;
@@ -52,6 +56,7 @@ class AbalyApp extends StatelessWidget {
   final PatientRepository patientRepository;
   final TemplateRepository templateRepository;
   final OrganizationRepository organizationRepository;
+  final ProgressRepository progressRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +68,9 @@ class AbalyApp extends StatelessWidget {
         RepositoryProvider<TemplateRepository>.value(value: templateRepository),
         RepositoryProvider<OrganizationRepository>.value(
           value: organizationRepository,
+        ),
+        RepositoryProvider<ProgressRepository>.value(
+          value: progressRepository,
         ),
       ],
       child: BlocProvider(
