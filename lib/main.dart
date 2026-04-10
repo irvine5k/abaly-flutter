@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide Session;
 
 import 'core/supabase/supabase_init.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
+import 'features/patients/data/patient_repository.dart';
+import 'features/patients/data/supabase_patient_repository.dart';
+import 'features/sessions/data/session_repository.dart';
+import 'features/sessions/data/supabase_session_repository.dart';
+import 'features/templates/data/supabase_template_repository.dart';
+import 'features/templates/data/template_repository.dart';
 import 'routing/app_router.dart';
 
 void main() async {
@@ -27,18 +33,33 @@ class AbalyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthCubit(authRepository: authRepository)
-        ..checkAuthStatus(),
-      child: Builder(
-        builder: (context) {
-          final authCubit = context.read<AuthCubit>();
-          return MaterialApp.router(
-            title: 'Abaly',
-            theme: AppTheme.lightTheme,
-            routerConfig: appRouter(authCubit),
-          );
-        },
+    final client = Supabase.instance.client;
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SessionRepository>(
+          create: (_) => SupabaseSessionRepository(client: client),
+        ),
+        RepositoryProvider<PatientRepository>(
+          create: (_) => SupabasePatientRepository(client: client),
+        ),
+        RepositoryProvider<TemplateRepository>(
+          create: (_) =>
+              SupabaseTemplateRepository(client: client),
+        ),
+      ],
+      child: BlocProvider(
+        create: (_) => AuthCubit(authRepository: authRepository)
+          ..checkAuthStatus(),
+        child: Builder(
+          builder: (context) {
+            final authCubit = context.read<AuthCubit>();
+            return MaterialApp.router(
+              title: 'Abaly',
+              theme: AppTheme.lightTheme,
+              routerConfig: appRouter(authCubit),
+            );
+          },
+        ),
       ),
     );
   }
